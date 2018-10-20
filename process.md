@@ -55,70 +55,62 @@ header|meaning
 The quickest way to do it is as follows (make sure [copyq](https://hluk.github.io/CopyQ/) is running):
 
 1. Highlight the issue number on github and press `ctrl+c` :
-
-    example_1
+    ![example_1](docs/example_1.png)
+    
 2. Highlight the maker txid in the issue page and press `ctrl+c`:
-    example_2
+    ![example_2](docs/example_2.png)
     
 3. open a block explorer (showing [bitaps](https://bitaps.com)) and search for the txid from step `2`
-   example_3
+   ![example_3](docs/example_3.png)
    
 4. Highlight the input address and press `ctrl+c`, if there are more pick one. Idealy the user should have provided an address where to reimburse to
-
-    example_4
+    ![example_4](docs/example_4.png)
     
 5. Highlight the first output addres and press `ctrl+c`. This is the trading fee to the arbitrator.
-
-   example_5
+   ![example_5](docs/example_5.png)
    
 6. Highlight the mining fee and press `ctrl+c`
-
-   example_6
+   ![example_6](docs/example_6.png)
    
 7. Highlight the trade id from the issue header and press `ctrl+c`
-
-   example_7
+   ![example_7](docs/example_7.png)
    
 If you followed steps 1-7 all the relevant information you need for a line in the csv file is in the clipboard manager. 
-
-    copyq_1
+    ![copyq_1](docs/copyq_1.png)
 
 We can use it to our advantage. Open [copyq](https://hluk.github.io/CopyQ/), hold down `shift` and using the `down arrow` key select the last 6 items 
+    ![copyq_2](docs/copyq_2.png)
 
-    copyq_2
-
-and reverse them (Edit->Reverse selected items or press `ctrl+shift+r`).
-
-    copyq_3
+and reverse them (`Edit->Reverse selected items` or press `ctrl+shift+r`).
+    ![copyq_3](docs/copyq_3.png)
 
 Open the support file in vim:
     `vim support-101.csv`
     
 Navigate to the first line, press `o` to start a new line and open [copyq](https://hluk.github.io/CopyQ/). Select the last 6 items and press `enter` to paste them to `vim`. 
 
-    vim_1
+    ![vim_1](docs/vim_1.png)
 
 Press `escape` to quit edit mode and navigate the cursor to the line with the github issue (103 in our case). 
-
-    vim_2
+    ![vim_2](docs/vim_2.png)
 
 Then press `:` and type in `.,$s/\n/,/`. Make sure the cursor is as described in the above step.
-
-    vim_3
+    ![vim_3](docs/vim_3.png)
 
 After pressing `enter` all new lines will be replaced with a comma. There is an extra comma at the end which has to be removed. Press `escape` to make sure you are out of edit mode and press `$`. This will jump to the last character of the line. Pressing `x` will remove a character. 
 
 Once done, make sure you are out of edit mode and press `:` then type `wq`. `w` stands for write and `q` for quit. This will save the file and quit vim.
 
 You need to commit the change you have done to the `support-101.csv` file. The commit has to include the issue number you just worked now. In our case #103. Run:
+
     `git commit -am "Add txns for fee reimbursement #103"
     
 And push the changes to the repo:
+
     `git push`
     
-Then drag the card from [projects -> reimbursement -> In progress](https://github.com/bisq-network/support/projects/1) to `Staged` card. The issue should have the steps nicely self documented now, it should something like on the following image:
-
-    ready_issue
+Then drag the card from [projects -> reimbursement -> In progress](https://github.com/bisq-network/support/projects/1) to [Staged](https://github.com/bisq-network/support/projects/1) . The issue should have the steps nicely self documented now, it should look like on the following image:
+    ![ready_issue](docs/ready_issue.png)
 
 ### Lessons learned
 
