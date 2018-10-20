@@ -4,7 +4,7 @@
 This document should help with quick reimbursements for Bisq. A good documentation makes it easy for other people to do the job and maintain the decentralised nature of Bisq this way.
 
 ### Disclaimer
-The guide expects a unix-like operating system to be used for all commands.
+The guide expects a unix-like operating system to be used for all commands. Typo corrections or other improvements are very welcome!
 
 ### Setting things up
 Clone the repository to your local drive:
@@ -38,7 +38,7 @@ When you start working on an issue drag it to the `In progress` column, then ope
 
 ### Working on an issue - an example
 
-We will use #103 as an example here. 
+We will use [#103](https://github.com/bisq-network/support/issues/103) as an example here. 
 As seen on the [image](https://user-images.githubusercontent.com/301810/39520263-460060c6-4e0a-11e8-886c-9a1bc9d681c4.png) in the issue one of the transactions has a check mark. That one was broadcast to the network. It is a good idea to check the other one on a block explorer, too. Sometimes it happens that both are broadcast, but the deposit address never makes it. Anyway this issue had only the maker transaction on the blockchain, so it means it has to be reimburesed and added to the newly created csv file.
 
 The csv file has these header columns: `gh,transaction,address,tradingfee,miningfee,tradeid`
@@ -63,10 +63,10 @@ The quickest way to do it is as follows (make sure [copyq](https://hluk.github.i
 3. open a block explorer (showing [bitaps](https://bitaps.com)) and search for the txid from step `2`
    ![example_3](docs/example_3.png)
    
-4. Highlight the input address and press `ctrl+c`, if there are more pick one. Idealy the user should have provided an address where to reimburse to
+4. Highlight the input address and press `ctrl+c`, if there are more pick one. Idealy the user should have provided an address where to reimburse to. If that is the case put that address to the clipboard.
     ![example_4](docs/example_4.png)
     
-5. Highlight the first output addres and press `ctrl+c`. This is the trading fee to the arbitrator.
+5. Highlight the amount next to the first output addres and press `ctrl+c`. This is the trading fee to the arbitrator.
    ![example_5](docs/example_5.png)
    
 6. Highlight the mining fee and press `ctrl+c`
@@ -89,7 +89,7 @@ Open the support file in vim:
     
 Navigate to the first line, press `o` to start a new line and open [copyq](https://hluk.github.io/CopyQ/). Select the last 6 items and press `enter` to paste them to `vim`. 
 
-    ![vim_1](docs/vim_1.png)
+![vim_1](docs/vim_1.png)
 
 Press `escape` to quit edit mode and navigate the cursor to the line with the github issue (103 in our case). 
     ![vim_2](docs/vim_2.png)
