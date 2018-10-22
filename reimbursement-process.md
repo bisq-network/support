@@ -103,7 +103,7 @@ Once done, make sure you are out of edit mode and press `:` then type `wq`. `w` 
 
 You need to commit the change you have done to the `support-101.csv` file. The commit has to include the issue number you just worked now. In our case #103. Run:
 
-    `git commit -am "Add txns for fee reimbursement #103"
+    `git commit -am "Add txns for fee reimbursement #103" `
     
 And push the changes to the repo:
 
