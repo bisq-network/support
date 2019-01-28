@@ -1,4 +1,4 @@
-#This directory contains small helper scripts
+# This directory contains small helper scripts
 
 ## get_data.sh
 
