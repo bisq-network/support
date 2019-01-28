@@ -24,7 +24,7 @@
 The script creates a log directory where it copies all json data for a given maker/taker txid from the blockchain. The filename is the txid.
 
 #### example:
-Using #197 as an example
+Using [#197](https://github.com/bisq-network/support/issues/197) as an example
 
 ```
 user@host:~/bisq/support/helper$ cat info
