@@ -19,6 +19,10 @@ Deposit: ..........
 
 >_A reimbursement request has to contain textual representation of **Maker**, **Taker** and **Deposit** TXIDs (copy them from the client to the issue). **All TXIDs that are visible in the screenshot must be copied to the issue in text form!**_
 
+Bisq version:
+
+>_Provide the Bisq client version to help developers identify the causing issue._
+
 Other notes:
 
 >_Issue [#197](https://github.com/bisq-network/support/issues/197) can be used as a good example of a correct reimbursement request._
