@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
->_The XXXXX part in the issue title are the first 5 characters of the Trade ID._
+>_The XXXXX part in the issue title are the first characters of the Trade ID before the "-" (dash)._
 
 SCREENSHOT HERE
 
@@ -17,7 +17,7 @@ Maker:  ..........
 Taker: ...........
 Deposit: ..........
 
->_A reimbursement request has to contain textual representation of **Maker**, **Taker** and **Deposit** TXIDs (copy them from the client to the issue). **All TXIDs that are visible in the screenshot must be copied to the issue in text form!**_
+>_A reimbursement request has to contain textual representation of **Maker**, **Taker** and **Deposit** TXIDs (copy them from the client to the issue). **All TXIDs that are visible in the screenshot must be copied to the issue in text form! Please use exact form for Maker/Taker/Deposit - no abbreviations like M:, T: or adding extra characters like "Maker TX:", etc. Leave those fields as they are and replace the "........" with the appropreate txid**_
 
 Bisq version:
 
