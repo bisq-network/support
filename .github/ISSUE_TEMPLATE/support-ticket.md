@@ -1,9 +1,5 @@
 <if contains sensitive info please use the encryption feature on Keybase>
 
-title: 
-
-github-issue: 
-
 brief-description: 
 
 started_at_UTC: <yyyy-mm-dd hh:mm>
@@ -15,5 +11,7 @@ closed_at_UTC: <yyyy-mm-dd hh:mm>
 closed_at_block:
 
 solution: 
+
+github-issue: 
 
 support_type: 
