@@ -1,6 +1,6 @@
 name: Auto Assign Project
 
-on: [pull_request, issues]
+on: [issues]
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
