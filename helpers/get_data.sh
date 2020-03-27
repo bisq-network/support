@@ -30,12 +30,15 @@ function get_tx_info(){
 	local reimb=$4
 	
 	mkdir -p log
-	curl https://bitaps.com/api/transaction/$txid -o $txid 2> /dev/null
+	curl https://api.bitaps.com/btc/v1/blockchain/transaction/$txid -o $txid 2> /dev/null
 	if [ "$reimb" == "" ];then
-		reimb=$(cat $txid|jq '.input[0].address[0]'|tr -d '"')
+		#reimb=$(cat $txid|jq '.input[0].address[0]'|tr -d '"') #old api end point
+		reimb=$(cat $txid|jq '.data.vIn."0".address'|tr -d '"')
 	fi
-	local tradingfee="0$(echo "scale=8;$(cat $txid|jq '.output[0].amount')/$satoshis"|bc -l)"
-	local miningfee="0$(echo "scale=8;$(cat $txid|jq '.fee')/$satoshis"|bc -l)"
+	#local tradingfee="0$(echo "scale=8;$(cat $txid|jq '.output[0].amount')/$satoshis"|bc -l)" #old api end point
+	local tradingfee="0$(echo "scale=8;$(cat $txid|jq '.data.vOut."0".value')/$satoshis"|bc -l)"
+	#local miningfee="0$(echo "scale=8;$(cat $txid|jq '.fee')/$satoshis"|bc -l)" #old api end point
+	local miningfee="0$(echo "scale=8;$(cat $txid|jq '.data.fee')/$satoshis"|bc -l)"
 	echo $gh,$txid,$reimb,$tradingfee,$miningfee,$tradeid	
 	mv $txid log
 }
