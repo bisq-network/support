@@ -4,6 +4,7 @@ helpers_dir="helpers"
 fetch_issue="./fetch_issue.sh"
 in_helpers_dir=$(pwd|grep 'helpers' -c)
 support_file=$(ls ../support-*.csv|grep -E 'support-[0-9]+'|sort -g -t '-' -k 2|tail -n 1|cut -d'/' -f2)
+support_file="support-366.csv"
 get_data="./get_data.sh"
 sed=""
 if [ "$OSTYPE" == "darwin" ];then
@@ -35,7 +36,7 @@ function ask_user(){
 }
 function test_if_issue_exists(){
   local issue=$1
-  if [ $(grep "$issue" ../${support_file} -c) -ne 0 ];then
+  if [ $(grep "^$issue," ../${support_file} -c) -ne 0 ];then
     inform "issue $issue already exists, not processing"
     exit 1
   fi
