@@ -66,8 +66,8 @@ cd ..
 
 inform "running git diff for you"
 git diff
-inform "removing lines with 'null'"
-$sed -i '/null/d' $support_file
+inform "removing lines with null"
+$sed -i '/null/d' ${support_file}
 inform "running git diff for you"
 git diff
 
