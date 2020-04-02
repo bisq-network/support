@@ -8,8 +8,7 @@ support_file="support-366.csv"
 support_issue=366
 get_data="./get_data.sh"
 sed=""
-if [ "$OSTYPE" == "darwin" ];then
-  echo "we are here"
+if [ "$(echo $OSTYPE|grep 'darwin*' -c)" == "1" ];then
   sed=$(which gsed)
   if [ -z $sed  ];then
     echo "Mac OS was detected, but you do not have gsed installed, please install it!"
