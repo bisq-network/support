@@ -3,7 +3,7 @@
 helpers_dir="helpers"
 fetch_issue="./fetch_issue.sh"
 in_helpers_dir=$(pwd|grep 'helpers' -c)
-support_file=$(find .. -name support* |grep -E 'support-[0-9]+'|sort -g -t '-' -k 2|tail -n 1|cut -d'/' -f2)
+support_file=$(ls ../support-*.csv|grep -E 'support-[0-9]+'|sort -g -t '-' -k 2|tail -n 1|cut -d'/' -f2)
 get_data="./get_data.sh"
 sed=""
 if [ "$OSTYPE" == "darwin" ];then
