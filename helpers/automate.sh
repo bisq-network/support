@@ -5,6 +5,7 @@ fetch_issue="./fetch_issue.sh"
 in_helpers_dir=$(pwd|grep 'helpers' -c)
 support_file=$(ls ../support-*.csv|grep -E 'support-[0-9]+'|sort -g -t '-' -k 2|tail -n 1|cut -d'/' -f2)
 support_file="support-366.csv"
+support_issue=366
 get_data="./get_data.sh"
 sed=""
 if [ "$OSTYPE" == "darwin" ];then
@@ -82,6 +83,6 @@ ask_user "can I push to git? All looks ok?"
 git push
 inform "commenting on the issue"
 echo +x
-ghi comment -m "Will be reimbursed with #$issue" $issue
+ghi comment -m "Will be reimbursed with #$support_issue" $issue
 echo -x
 inform "changes commited!"
