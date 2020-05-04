@@ -1,0 +1,234 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <title>Bisq Repayment Report</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+</head>
+<body>
+    <center>
+    <h2>Bisq Repayment Report</h2>
+    <small>Hard-coded input parameters, copied from: <a href="https://github.com/bisq-network/admin/issues/76">https://github.com/bisq-network/admin/issues/76</a>
+    <br>You can paste updated info into this box, or update this source file when new information is available.
+    <br>(NB: tabs are significant)</small>
+    <br>
+    <br>
+        <textarea rows=10 cols=72 id="phrase"></textarea>
+    <br>
+    <br>
+    <button id='START' onclick='startTest();'>run report</button>
+    <br>
+    <br>
+        <div id="results">results</div>
+    </center>
+</body>
+
+<script type="text/javascript">
+
+    window.readyHandlers = [];
+    window.ready = function ready(handler) {
+        window.readyHandlers.push(handler);
+        handleState();
+    };
+
+    window.handleState = function handleState () {
+        if (['interactive', 'complete'].indexOf(document.readyState) > -1) {
+            while(window.readyHandlers.length > 0) {
+                (window.readyHandlers.shift())();
+            }
+        }
+    };
+
+    document.onreadystatechange = window.handleState;
+
+    ready(function () {
+       // this hard-coded input data is cut-and-paste copied from
+       // https://github.com/bisq-network/admin/issues/76
+       // will need to update here whenever a change is made (i.e. a new address)
+        var str = 
+            "ID 	btc lost 	usd value 	repayment address\n"
+            +"1 	4.08 	$25,391.88 	1EU2aUQkHQukKbk3t5fmA4quHyMRBupM2U\n"
+            +"2 	4.60 	$31,126.54 	1ALWSRCKBuad6JUh7Y371uDPyH9nwbsvxZ\n"
+            +"3 	2.30 	$14,314.05 	1HpvvMHcoXQsX85CjTsco5ZAAMoGu2Mze9\n"
+            +"4 	8.80 	$54,766.80 	TBD\n"
+            +"5 	12.78 	$93,418.99 	19BNi5EpZhgBBWAt5ka7xWpJpX2ZWJEYyq\n"
+            +"6 	2.30 	$16,812.49 	TBD\n"
+            +"\n\n";
+        document.getElementById('phrase').value = str;
+    });
+
+
+    function startTest(){
+        jmcData.prepareData();
+        document.body.style.cursor = 'wait';
+        window.setTimeout(makeApiRequest,10);
+    }
+
+    function makeApiRequest() { // regular API request
+        // get a line from the input textarea
+        var addrs = jmcData.getAddressList();
+        if (listUnspentBlockchair(addrs) == true) {
+            document.getElementById('results').innerHTML = "calculating...\n";
+        }
+        else {
+            document.getElementById('results').innerHTML = "error\n";
+        }
+    }
+
+
+    // ===================================================================
+    // data manipulation functions
+
+    var jmcData = {
+
+        globalAccounts: null,
+
+        // grab the static source data required to make the report (repayment_address, etc)
+        prepareData: function() {
+            var strJson = '{"accounts": [ ';
+            var lines = document.getElementById('phrase').value.split('\n');
+            var count = 0;
+            while (lines.length > 0) {
+                var str = lines[0];
+                lines.splice(0,1);  // remove the first element
+                var fields = str.split('\t');
+                if (fields[0].trim() == "ID")
+                    continue;   // ignore header line
+                if (fields.length >= 4) {
+                    if (count > 0) { strJson += ','; }
+                    strJson += '{ "id":"'+ fields[0].trim() + '"';
+                    strJson += ', "btc_lost":"'+ fields[1].trim() + '"';
+                    strJson += ', "usd_value":"'+ fields[2].trim() + '"';
+                    strJson += ', "repayment_address":"'+ fields[3].trim() + '"';
+                    strJson += ', "btc_received":"0"';
+                    strJson += ', "usd_received":"0"';
+                    strJson += '}';
+                }
+                count = count + 1;
+            }
+            strJson += '], "transaction_count":"0"}';
+            globalAccounts = JSON.parse(strJson);
+
+        },
+
+        // get list of addresses for which we are reporting on
+        getAddressList: function() {
+            var retVal = "";
+            var all_info = globalAccounts.accounts;
+            for (const i of all_info) {
+                if (i.repayment_address != "TBD") {
+                    if (retVal.length > 0) { retVal += ","; }
+                    retVal += i.repayment_address;
+                }
+            }
+            return retVal;
+        },
+
+        // populate the report data with information retrieved from blockchair
+        setAmounts: function(repayment_address, btc_received, usd_received) {
+            var all_info = globalAccounts.accounts;
+            for (const i of all_info) {
+                if (i.repayment_address == repayment_address) {
+                    i.btc_received = btc_received;
+                    i.usd_received = usd_received;
+                }
+            }
+        },
+
+        // populate the report data with information retrieved from blockchair
+        setTransactionCount: function(transaction_count) {
+            globalAccounts.transaction_count = transaction_count;
+        },
+
+        // write the report into an HTML table
+        updateDocument: function() {
+            var results = "<table border=1 cellpadding=10>";
+                results += "<tr>"
+                    +"<td style='background-color:#a0a0a0'>ID</td>" 
+                    +"<td style='background-color:#a0a0a0'>Repayment address</td>" 
+                    +"<td style='background-color:#a0a0a0'>BTC lost</td>" 
+                    +"<td style='background-color:#a0a0a0'>BTC received</td>" 
+                    +"<td style='background-color:#a0a0a0'>USD value</td>" 
+                    +"<td style='background-color:#a0a0a0'>USD received</td></tr>\n";
+            var all_info = globalAccounts.accounts;
+            for (const i of all_info) {
+                results += "<tr>"
+                    +"<td>" + i.id.toString() + "</td>" 
+                    +"<td>" + i.repayment_address + "</td>" 
+                    +"<td>" + i.btc_lost.toString() + "</td>" 
+                    +"<td>" + i.btc_received.toString() + "</td>" 
+                    +"<td>" + i.usd_value.toString() + "</td>" 
+                    +"<td>$" + i.usd_received.toString() + "</td>" 
+                    +"</tr>\n";
+            }
+            results += "</table>\n";
+            results += "<br><br>Transaction count: " + globalAccounts.transaction_count.toString() + "<br>\n";
+            document.getElementById('results').innerHTML = results;
+            document.body.style.cursor = 'auto';
+        },
+
+
+    };  // end of jmcData
+
+
+
+    /* retrieve data from blockchair */
+    function listUnspentBlockchair(addr){
+        var options = {
+            url: "https://api.blockchair.com/bitcoin/dashboards/addresses/"+addr,
+            type: 'GET',
+            data: {},
+            dataType: 'json',
+            successCodes: [304, 401, 403, 404, 500],
+            statusCode: {},
+            success: [],
+            error: [],
+            complete: []
+        };
+
+        var req = new XMLHttpRequest();
+        var url = options.url;
+
+        req.addEventListener("progress", updateProgress);
+        req.addEventListener("load", transferComplete);
+        req.addEventListener("error", transferFailed);
+        req.addEventListener("abort", transferCanceled);
+
+        req.onreadystatechange = function () 
+        {
+            if (req.readyState > 3)
+            {
+                if (req.responseText.length > 0) {
+                    var data = JSON.parse(req.responseText);
+                    if ((data.context && data.data) && data.context.code =='200'){
+                        var all_info = data.data.addresses;
+                        for (var m in all_info){
+                            var o = all_info[m];
+                            var received = ((o.received.toString()*1)/100000000).toFixed(8);
+                            var received_usd = o.received_usd;
+                            jmcData.setAmounts(m, received, received_usd);
+                        }
+                        jmcData.setTransactionCount(data.data.set.transaction_count);
+                        jmcData.updateDocument();
+                    }
+                }
+            }
+        };
+
+        req.open(options.type, url, true);
+        req.send();
+
+        function updateProgress(evt) {
+        }
+        function transferComplete(evt) {
+        }
+        function transferFailed(evt) {
+        }
+        function transferCanceled(evt) {
+        }
+
+        return true;
+    }  // end of listUnspentBlockchair
+
+
+</script>
+</html>
