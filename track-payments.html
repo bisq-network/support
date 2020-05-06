@@ -140,7 +140,7 @@
         },
 
         // write the report into an HTML table
-        updateDocument: function() {
+        updateDocument: function(status) {
             var results = "<table border=1 cellpadding=10>";
                 results += "<tr>"
                     +"<td style='background-color:#a0a0a0'>ID</td>" 
@@ -157,11 +157,12 @@
                     +"<td>" + i.btc_lost.toString() + "</td>" 
                     +"<td>" + i.btc_received.toString() + "</td>" 
                     +"<td>" + i.usd_value.toString() + "</td>" 
-                    +"<td>$" + i.usd_received.toString() + "</td>" 
+                    +"<td>$" + Number(i.usd_received).toFixed(2) + "</td>"
                     +"</tr>\n";
             }
             results += "</table>\n";
             results += "<br><br>Transaction count: " + globalAccounts.transaction_count.toString() + "<br>\n";
+            if (status != null) { results += "<br><br>Blockchair status: " + status + "<br>\n"; }
             document.getElementById('results').innerHTML = results;
             document.body.style.cursor = 'auto';
         },
@@ -197,6 +198,7 @@
         {
             if (req.readyState > 3)
             {
+                debugger;
                 if (req.responseText.length > 0) {
                     var data = JSON.parse(req.responseText);
                     if ((data.context && data.data) && data.context.code =='200'){
@@ -208,8 +210,12 @@
                             jmcData.setAmounts(m, received, received_usd);
                         }
                         jmcData.setTransactionCount(data.data.set.transaction_count);
-                        jmcData.updateDocument();
                     }
+                    var blockchairStatus = null;
+                    if ((data.context && typeof data.context.error !== 'undefined')){
+                        blockchairStatus = data.context.error.toString();
+                    }
+                    jmcData.updateDocument(blockchairStatus);
                 }
             }
         };
