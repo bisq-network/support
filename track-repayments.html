@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Bisq Repayment Report</title>
@@ -44,7 +44,7 @@
        // this hard-coded input data is cut-and-paste copied from
        // https://github.com/bisq-network/admin/issues/76
        // will need to update here whenever a change is made (i.e. a new address)
-        var str = 
+        var str =
             "ID 	btc lost 	usd value 	repayment address\n"
             +"1 	4.08 	$25,391.88 	1EU2aUQkHQukKbk3t5fmA4quHyMRBupM2U\n"
             +"2 	4.60 	$31,126.54 	1ALWSRCKBuad6JUh7Y371uDPyH9nwbsvxZ\n"
@@ -143,20 +143,20 @@
         updateDocument: function(status) {
             var results = "<table border=1 cellpadding=10>";
                 results += "<tr>"
-                    +"<td style='background-color:#a0a0a0'>ID</td>" 
-                    +"<td style='background-color:#a0a0a0'>Repayment address</td>" 
-                    +"<td style='background-color:#a0a0a0'>BTC lost</td>" 
-                    +"<td style='background-color:#a0a0a0'>BTC received</td>" 
-                    +"<td style='background-color:#a0a0a0'>USD value</td>" 
+                    +"<td style='background-color:#a0a0a0'>ID</td>"
+                    +"<td style='background-color:#a0a0a0'>Repayment address</td>"
+                    +"<td style='background-color:#a0a0a0'>BTC lost</td>"
+                    +"<td style='background-color:#a0a0a0'>BTC received</td>"
+                    +"<td style='background-color:#a0a0a0'>USD value</td>"
                     +"<td style='background-color:#a0a0a0'>USD received</td></tr>\n";
             var all_info = globalAccounts.accounts;
             for (const i of all_info) {
                 results += "<tr>"
-                    +"<td>" + i.id.toString() + "</td>" 
-                    +"<td>" + i.repayment_address + "</td>" 
-                    +"<td>" + i.btc_lost.toString() + "</td>" 
-                    +"<td>" + i.btc_received.toString() + "</td>" 
-                    +"<td>" + i.usd_value.toString() + "</td>" 
+                    +"<td>" + i.id.toString() + "</td>"
+                    +"<td>" + i.repayment_address + "</td>"
+                    +"<td>" + i.btc_lost.toString() + "</td>"
+                    +"<td>" + i.btc_received.toString() + "</td>"
+                    +"<td>" + i.usd_value.toString() + "</td>"
                     +"<td>$" + Number(i.usd_received).toFixed(2) + "</td>"
                     +"</tr>\n";
             }
@@ -194,7 +194,7 @@
         req.addEventListener("error", transferFailed);
         req.addEventListener("abort", transferCanceled);
 
-        req.onreadystatechange = function () 
+        req.onreadystatechange = function ()
         {
             if (req.readyState > 3)
             {
