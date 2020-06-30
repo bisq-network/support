@@ -3,7 +3,7 @@
 helpers_dir="helpers"
 fetch_issue="./fetch_issue.sh"
 in_helpers_dir=$(pwd|grep 'helpers' -c)
-support_file=$(git show :/batch --name-only|tail -n 1)
+support_file=$(git show :/'Add batch fee reimbursement CSV file' --name-only|tail -n 1)
 support_issue=$(echo $support_file|awk -F '[-.]' '{print $2}')
 get_data="./get_data.sh"
 sed=""
