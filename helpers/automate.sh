@@ -3,12 +3,11 @@
 helpers_dir="helpers"
 fetch_issue="./fetch_issue.sh"
 in_helpers_dir=$(pwd|grep 'helpers' -c)
-support_file=$(ls ../support-*.csv|grep -E 'support-[0-9]+'|sort -g -t '-' -k 2|tail -n 1|cut -d'/' -f2)
-support_file="support-366.csv"
-support_issue=366
+support_file=$(git show :/batch --name-only|tail -n 1)
+support_issue=$(echo $support_file|awk -F '[-.]' '{print $2}')
 get_data="./get_data.sh"
 sed=""
-if [ "$(echo $OSTYPE|grep 'darwin*' -c)" == "1" ];then
+if [ "$(echo $OSTYPE|grep 'darwin.*' -c)" == "1" ];then
   sed=$(which gsed)
   if [ -z $sed  ];then
     echo "Mac OS was detected, but you do not have gsed installed, please install it!"
