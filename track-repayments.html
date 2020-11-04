@@ -80,11 +80,19 @@
 
     var jmcData = {
 
-        globalAccounts: null,
+        work: {
+            accounts: [],
+            total_btc_lost: 0.0,
+            total_usd_lost: 0.0,
+            total_btc_received: 0.0,
+            total_usd_received: 0.0,
+            transaction_count: 0,
+            first_seen_receiving: null,
+            blockchairStatus: null
+        },
 
         // grab the static source data required to make the report (repayment_address, etc)
         prepareData: function() {
-            var strJson = '{"accounts": [ ';
             var lines = document.getElementById('phrase').value.split('\n');
             var count = 0;
             while (lines.length > 0) {
@@ -94,26 +102,27 @@
                 if (fields[0].trim() == "ID")
                     continue;   // ignore header line
                 if (fields.length >= 4) {
-                    if (count > 0) { strJson += ','; }
-                    strJson += '{ "id":"'+ fields[0].trim() + '"';
-                    strJson += ', "btc_lost":"'+ fields[1].trim() + '"';
-                    strJson += ', "usd_value":"'+ fields[2].trim() + '"';
-                    strJson += ', "repayment_address":"'+ fields[3].trim() + '"';
-                    strJson += ', "btc_received":"0"';
-                    strJson += ', "usd_received":"0"';
-                    strJson += '}';
+                    var account = {
+                        id:                 fields[0].trim(),
+                        btc_lost:           Number(fields[1].trim().replace(/\,/g, '')),
+                        usd_value:          Number(fields[2].trim().replace(/[\$\,]/g, '')),
+                        repayment_address:  fields[3].trim(),
+                        btc_received:       0.0,
+                        usd_received:       0.0
+                    };
+                    this.work.accounts.push(account);
+                    this.work.total_btc_lost += account.btc_lost;
+                    this.work.total_usd_lost += account.usd_value;
                 }
                 count = count + 1;
             }
-            strJson += '], "transaction_count":"0"}';
-            globalAccounts = JSON.parse(strJson);
 
         },
 
         // get list of addresses for which we are reporting on
         getAddressList: function() {
             var retVal = "";
-            var all_info = globalAccounts.accounts;
+            var all_info = this.work.accounts;
             for (const i of all_info) {
                 if (i.repayment_address != "TBD") {
                     if (retVal.length > 0) { retVal += ","; }
@@ -125,22 +134,24 @@
 
         // populate the report data with information retrieved from blockchair
         setAmounts: function(repayment_address, btc_received, usd_received) {
-            var all_info = globalAccounts.accounts;
+            var all_info = this.work.accounts;
             for (const i of all_info) {
                 if (i.repayment_address == repayment_address) {
                     i.btc_received = btc_received;
                     i.usd_received = usd_received;
+                    this.work.total_btc_received += btc_received;
+                    this.work.total_usd_received += usd_received;
                 }
             }
         },
 
-        // populate the report data with information retrieved from blockchair
-        setTransactionCount: function(transaction_count) {
-            globalAccounts.transaction_count = transaction_count;
-        },
-
         // write the report into an HTML table
-        updateDocument: function(status) {
+        updateDocument: function(data) {
+            data.pct_btc_received =
+                100*(data.total_btc_received / data.total_btc_lost);
+            data.pct_usd_received =
+                100*(data.total_usd_received / data.total_usd_lost);
+
             var results = "<table border=1 cellpadding=10>";
                 results += "<tr>"
                     +"<td style='background-color:#a0a0a0'>ID</td>"
@@ -149,20 +160,38 @@
                     +"<td style='background-color:#a0a0a0'>BTC received</td>"
                     +"<td style='background-color:#a0a0a0'>USD value</td>"
                     +"<td style='background-color:#a0a0a0'>USD received</td></tr>\n";
-            var all_info = globalAccounts.accounts;
+            var all_info = data.accounts;
             for (const i of all_info) {
                 results += "<tr>"
                     +"<td>" + i.id.toString() + "</td>"
                     +"<td>" + i.repayment_address + "</td>"
                     +"<td>" + i.btc_lost.toString() + "</td>"
                     +"<td>" + i.btc_received.toString() + "</td>"
-                    +"<td>" + i.usd_value.toString() + "</td>"
+                    +"<td>$" + i.usd_value.toString() + "</td>"
                     +"<td>$" + Number(i.usd_received).toFixed(2) + "</td>"
                     +"</tr>\n";
             }
+            results += "<tr>"
+                +"<td><b>" + "totals" + "</b></td>"
+                +"<td>" + "&nbsp;" + "</td>"
+                +"<td><b>" + data.total_btc_lost.toString() + "</b></td>"
+                +"<td><b>" + data.total_btc_received.toFixed(8) + "</b></td>"
+                +"<td><b>$" + data.total_usd_lost.toString() + "</b></td>"
+                +"<td><b>$" + data.total_usd_received.toFixed(2) + "</b></td>"
+                +"</tr>\n";
+
+            results += "<tr>"
+                +"<td><b>" + "&nbsp;" + "</b></td>"
+                +"<td>" + "&nbsp;" + "</td>"
+                +"<td>" + "&nbsp;" + "</td>"
+                +"<td>" + data.pct_btc_received.toFixed(2) + "%</td>"
+                +"<td>" + "&nbsp;" + "</td>"
+                +"<td>" + data.pct_usd_received.toFixed(2) + "%</td>"
+                +"</tr>\n";
             results += "</table>\n";
-            results += "<br><br>Transaction count: " + globalAccounts.transaction_count.toString() + "<br>\n";
-            if (status != null) { results += "<br><br>Blockchair status: " + status + "<br>\n"; }
+            results += "<br><br>First seen receiving: " + data.first_seen_receiving + "<br>\n";
+            results += "<br><br>Transaction count: " + data.transaction_count.toString() + "<br>\n";
+            if (data.blockchairStatus != null) { results += "<br><br>Blockchair status: " + data.blockchairStatus + "<br>\n"; }
             document.getElementById('results').innerHTML = results;
             document.body.style.cursor = 'auto';
         },
@@ -198,24 +227,23 @@
         {
             if (req.readyState > 3)
             {
-                debugger;
                 if (req.responseText.length > 0) {
                     var data = JSON.parse(req.responseText);
                     if ((data.context && data.data) && data.context.code =='200'){
                         var all_info = data.data.addresses;
                         for (var m in all_info){
                             var o = all_info[m];
-                            var received = ((o.received.toString()*1)/100000000).toFixed(8);
-                            var received_usd = o.received_usd;
+                            var received = Number(((o.received.toString()*1)/100000000).toFixed(8));
+                            var received_usd = Number(o.received_usd);
                             jmcData.setAmounts(m, received, received_usd);
                         }
-                        jmcData.setTransactionCount(data.data.set.transaction_count);
+                        jmcData.work.first_seen_receiving = data.data.set.first_seen_receiving;
+                        jmcData.work.transaction_count = data.data.set.transaction_count;
                     }
-                    var blockchairStatus = null;
                     if ((data.context && typeof data.context.error !== 'undefined')){
-                        blockchairStatus = data.context.error.toString();
+                        jmcData.work.blockchairStatus = data.context.error.toString();
                     }
-                    jmcData.updateDocument(blockchairStatus);
+                    jmcData.updateDocument(jmcData.work);
                 }
             }
         };
