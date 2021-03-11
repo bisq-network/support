@@ -20,6 +20,7 @@ Deposit: ..........
 >_A reimbursement request has to contain textual representation of **Maker**, **Taker** and **Deposit** TXIDs (copy them from the client to the issue). **All TXIDs that are visible in the screenshot must be copied to the issue in text form! Please use exact form for Maker/Taker/Deposit - no abbreviations like M:, T: or adding extra characters like "Maker TX:", etc. Leave those fields as they are and replace the "........" with the appropreate txid**_
 
 Bisq version:
+BTC address for reimbursement:
 
 >_Provide the Bisq client version to help developers identify the causing issue._
 
